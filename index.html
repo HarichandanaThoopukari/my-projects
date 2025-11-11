@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Health Chatbot</title>
+  <link rel="stylesheet" href="style23.css">
+</head>
+<body>
+
+  <!-- 🔹 Navbar -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <h1>💬 AI HealthBot</h1>
+    </div>
+    <div class="nav-right">
+      <div id="user-profile" class="user-profile" style="display: none;">
+        <span id="user-avatar" class="user-avatar">👤</span>
+        <span id="user-name" class="user-name"></span>
+        <button id="logout-btn" class="logout-btn">Logout</button>
+      </div>
+
+      <div id="default-nav">
+        <a href="login.html"><button class="nav-btn">Login</button></a>
+        <a href="sign.html"><button class="nav-btn">Sign up</button></a>
+      </div>
+
+      <!-- 🌐 Translate dropdown button -->
+      <div class="translate-menu" style="position:relative;display:inline-block;">
+        <button id="translate-btn" class="nav-btn" title="Translate">🌐 Translate</button>
+        <div id="translate-dropdown" class="translate-dropdown" style="display:none;position:absolute;right:0;margin-top:4px;background:#fff;border:1px solid #ccc;border-radius:8px;padding:6px;box-shadow:0 8px 24px rgba(140,149,159,0.2);z-index:1000;min-width:160px;">
+          <button class="lang-option" data-lang="en" style="display:block;width:100%;text-align:left;background:#ffffff;color:#24292f;padding:6px 8px;border-radius:6px;border:none;cursor:pointer;">English</button>
+          <button class="lang-option" data-lang="hi" style="display:block;width:100%;text-align:left;background:#ffffff;color:#24292f;padding:6px 8px;border-radius:6px;border:none;cursor:pointer;">हिंदी</button>
+          <button class="lang-option" data-lang="te" style="display:block;width:100%;text-align:left;background:#ffffff;color:#24292f;padding:6px 8px;border-radius:6px;border:none;cursor:pointer;">తెలుగు</button>
+          <button class="lang-option" data-lang="ta" style="display:block;width:100%;text-align:left;background:#ffffff;color:#24292f;padding:6px 8px;border-radius:6px;border:none;cursor:pointer;">தமிழ்</button>
+          <button class="lang-option" data-lang="ml" style="display:block;width:100%;text-align:left;background:#ffffff;color:#24292f;padding:6px 8px;border-radius:6px;border:none;cursor:pointer;">മലയാളം</button>
+          <button class="lang-option" data-lang="bn" style="display:block;width:100%;text-align:left;background:#ffffff;color:#24292f;padding:6px 8px;border-radius:6px;border:none;cursor:pointer;">বাংলা</button>
+        </div>
+      </div>
+      
+      <a href="about.html"><button class="nav-btn">About</button></a>
+      <a href="help.html"><button class="nav-btn">Help</button></a>
+    </div>
+  </nav>
+
+  <div class="main-container">
+    <!-- 🔹 Sidebar -->
+    <aside class="sidebar">
+      <h2>Recent Chats</h2>
+      <ul id="recent-chats"></ul>
+    </aside>
+
+    <!-- 🔹 Chat Section -->
+    <section class="chat-container">
+      <div class="chat-box" id="chat-box">
+        <div class="message bot-message">
+          Hello! I’m your AI health assistant. Ask me about any disease, symptoms, or prevention tips.
+        </div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 🔹 Footer -->
+  <footer>
+    <p>⚕ Stay safe. Stay healthy.</p>
+  </footer>
+
+  <script src="script.js"></script>
+
+  <style>
+    /* Consistent sizing for all navbar buttons */
+    .nav-btn, .logout-btn {
+      margin-left: 5px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.2;
+      min-height: 32px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .nav-btn {
+      background-color: #007bff;
+      color: white;
+    }
+    .nav-btn:hover {
+      background-color: #0056b3;
+    }
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 4px 12px;
+      margin-right: 10px;
+      font-weight: 500;
+      color: #333;
+    }
+    .user-avatar {
+      font-size: 1.5em;
+      color: #2ecc71;
+      background: #eafaf1;
+      border-radius: 50%;
+      padding: 2px 7px;
+    }
+    .user-name {
+      font-size: 1.1em;
+      color: #1abc9c;
+    }
+    .logout-btn {
+      margin-left: 10px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #ff4d4d;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .logout-btn:hover {
+      background-color: #c0392b;
+    }
+  </style>
+
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // Profile logic
+      function showProfile(user) {
+        document.getElementById('user-profile').style.display = 'flex';
+        document.getElementById('default-nav').style.display = 'none';
+        document.getElementById('user-name').textContent = (user.name && user.name.trim()) || user.email || 'User';
+      }
+
+      // Check localStorage for user profile (simulate login)
+      let user = JSON.parse(localStorage.getItem('currentUser'));
+      if (user) {
+        showProfile(user);
+      }
+
+      // Logout
+      document.getElementById('logout-btn').onclick = function() {
+        localStorage.removeItem('currentUser');
+        document.getElementById('user-profile').style.display = 'none';
+        document.getElementById('default-nav').style.display = 'block';
+        location.reload();
+      };
+
+      // Translate dropdown: initialize from saved preference and handle selection
+      const savedLang = localStorage.getItem('uiLang') || 'en';
+      const translateBtn = document.getElementById('translate-btn');
+      const dropdown = document.getElementById('translate-dropdown');
+      if (translateBtn && dropdown) {
+        translateBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === '') ? 'block' : 'none';
+        });
+        document.addEventListener('click', () => { dropdown.style.display = 'none'; });
+        dropdown.addEventListener('click', (e) => { e.stopPropagation(); });
+        dropdown.querySelectorAll('.lang-option').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const lang = btn.dataset.lang || 'en';
+            localStorage.setItem('uiLang', lang);
+            document.dispatchEvent(new CustomEvent('uiLangChanged', { detail: { lang } }));
+            dropdown.style.display = 'none';
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
