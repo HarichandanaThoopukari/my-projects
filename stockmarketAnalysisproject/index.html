@@ -1,0 +1,277 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stock Consultant Agent — Demo</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <!-- Floating stock market elements -->
+    <div class="floating-elements">
+      <div class="floating-element">📈</div>
+      <div class="floating-element">📊</div>
+      <div class="floating-element">💰</div>
+      <div class="floating-element">📉</div>
+      <div class="floating-element">💹</div>
+      <div class="floating-element">📈</div>
+      <div class="floating-element">📊</div>
+      <div class="floating-element">💰</div>
+      <div class="floating-element">📉</div>
+      <div class="floating-element">💹</div>
+    </div>
+    
+    <!-- Stock chart pattern overlay -->
+    <div class="stock-pattern"></div>
+    
+    <div class="container">
+      <div id="root"></div>
+    </div>
+
+    <!-- React from CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <script>
+      const e = React.createElement;
+      const root = document.getElementById('root');
+
+      function App(){
+        const [portfolioText, setPortfolioText] = React.useState('TCS,10\nINFY,5');
+        const [portfolioFile, setPortfolioFile] = React.useState(null);
+        const [output, setOutput] = React.useState(null);
+        const [billing, setBilling] = React.useState(null);
+        const [summary, setSummary] = React.useState(null);
+
+        async function analyze(){
+          let portfolio;
+          let fileName = '';
+          
+          if (portfolioFile) {
+            // Parse uploaded file
+            fileName = portfolioFile.name;
+            const text = await portfolioFile.text();
+            const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+            portfolio = lines.map(l => {
+              const [s, q] = l.split(',').map(x=>x && x.trim());
+              return { symbol: s.toUpperCase(), shares: Number(q || 0) };
+            }).filter(p => p.symbol && p.shares > 0);
+          } else {
+            // Parse manual input (CSV-like: SYMBOL,shares per line)
+            const lines = portfolioText.split('\n').map(l => l.trim()).filter(Boolean);
+            portfolio = lines.map(l => {
+              const [s, q] = l.split(',').map(x=>x && x.trim());
+              return { symbol: s.toUpperCase(), shares: Number(q || 0) };
+            }).filter(p => p.symbol && p.shares > 0);
+          }
+
+          if (portfolio.length === 0) {
+            setOutput({ error: 'No valid portfolio entries found. Please check your file format.' });
+            return;
+          }
+
+          // Show loading state
+          setOutput({ loading: true, message: `Analyzing ${portfolio.length} stocks${fileName ? ` from ${fileName}` : ''}...` });
+
+          try {
+            const res = await fetch('http://localhost:4000/analyze', { 
+              method:'POST', 
+              headers:{'Content-Type':'application/json'}, 
+              body: JSON.stringify({ portfolio }) 
+            });
+            const data = await res.json();
+            
+            if (!data.ok) {
+              setOutput({ error: data.error || 'Analysis failed' });
+              return;
+            }
+            
+            // Enhanced output with portfolio summary
+            const enhancedResult = {
+              ...data.result,
+              portfolioSummary: {
+                totalStocks: portfolio.length,
+                totalShares: portfolio.reduce((sum, p) => sum + p.shares, 0),
+                fileName: fileName || 'Manual Input',
+                stocks: portfolio.map(p => `${p.symbol} (${p.shares} shares)`).join(', ')
+              }
+            };
+            
+            setOutput(enhancedResult);
+            setBilling(data.billing);
+          } catch (error) {
+            // Check if it's a network error (server not running)
+            if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+              setOutput({ 
+                error: 'Backend server is not running. Please start the server on localhost:4000 or use demo mode.',
+                demoMode: true,
+                portfolioSummary: {
+                  totalStocks: portfolio.length,
+                  totalShares: portfolio.reduce((sum, p) => sum + p.shares, 0),
+                  fileName: fileName || 'Manual Input',
+                  stocks: portfolio.map(p => `${p.symbol} (${p.shares} shares)`).join(', ')
+                }
+              });
+            } else {
+              setOutput({ error: `Network error: ${error.message}` });
+            }
+          }
+        }
+
+        async function loadSummary(){
+          try {
+            const res = await fetch('http://localhost:4000/usage/summary');
+            const data = await res.json();
+            setSummary(data);
+          } catch (error) {
+            setSummary({ error: 'Server not available', message: 'Backend server is not running on localhost:4000' });
+          }
+        }
+
+        React.useEffect(()=>{ loadSummary(); }, []);
+
+        return e('div', null,
+          e('h1', null, '📈 Stock Consultant Agent'),
+          e('div', {className:'card'},
+            e('div', {className:'card-title'}, 'Portfolio Analysis'),
+            e('div', {className:'file-upload-section'},
+              e('label', {className:'file-input-label', htmlFor:'file-input'}, '📁 Choose Portfolio File'),
+              e('input', { 
+                id: 'file-input',
+                className: 'file-input',
+                type: 'file', 
+                accept: '.txt,.csv',
+                onChange: (ev) => {
+                  const file = ev.target.files[0];
+                  setPortfolioFile(file);
+                  if (file) {
+                    setPortfolioText(''); // Clear manual input when file is selected
+                  }
+                }
+              }),
+              portfolioFile ? e('div', {className:'file-name'}, `Selected: ${portfolioFile.name}`) : null
+            ),
+            e('div', {className:'or-divider'},
+              e('span', null, 'OR')
+            ),
+            e('div', null,
+              e('label', {style:{fontWeight:'600', color:'#2c3e50'}}, 'Enter Portfolio Manually:'),
+              e('textarea', { 
+                rows:4, 
+                value: portfolioText, 
+                onChange: (ev)=>{
+                  setPortfolioText(ev.target.value);
+                  if (ev.target.value) {
+                    setPortfolioFile(null); // Clear file when manual input is used
+                  }
+                },
+                placeholder: 'TCS,10\nINFY,5\nRELIANCE,2\nHDFC,8\n...'
+              })
+            ),
+            e('div', {className:'button-group'}, 
+              e('button', {className:'btn-primary', onClick: analyze}, '🚀 Analyze Portfolio'), 
+              e('button', {className:'btn-secondary', onClick: loadSummary}, '🔄 Refresh Usage')
+            )
+          ),
+
+          e('div', {className:'card results-section'},
+            e('div', {className:'card-title'}, 'Analysis Results'),
+            output ? (
+              output.loading ? 
+                e('div', {className:'loading-spinner'}, 
+                  e('div', {className:'spinner'}),
+                  output.message
+                ) :
+                output.error ?
+                  e('div', null,
+                    e('div', {className:'error-message'}, 
+                      e('strong', null, '❌ Error: '), output.error
+                    ),
+                    output.demoMode ? 
+                      e('div', {className:'demo-mode'},
+                        e('strong', null, '⚠️ Demo Mode: '),
+                        'Showing portfolio summary only. To get full analysis, start the backend server on localhost:4000'
+                      ) : null,
+                    output.portfolioSummary ? e('div', {className:'portfolio-summary'},
+                      e('div', {className:'portfolio-stats'},
+                        e('div', {className:'stat-item'},
+                          e('span', {className:'stat-value'}, output.portfolioSummary.totalStocks),
+                          e('span', {className:'stat-label'}, 'Stocks')
+                        ),
+                        e('div', {className:'stat-item'},
+                          e('span', {className:'stat-value'}, output.portfolioSummary.totalShares),
+                          e('span', {className:'stat-label'}, 'Total Shares')
+                        ),
+                        e('div', {className:'stat-item'},
+                          e('span', {className:'stat-value'}, output.portfolioSummary.fileName),
+                          e('span', {className:'stat-label'}, 'Source')
+                        )
+                      ),
+                      e('div', {style:{fontSize:'13px', color:'#666', marginTop:'8px'}},
+                        output.portfolioSummary.stocks
+                      )
+                    ) : null
+                  ) :
+                  e('div', null,
+                    e('div', {className:'portfolio-summary'},
+                      e('div', {className:'portfolio-stats'},
+                        e('div', {className:'stat-item'},
+                          e('span', {className:'stat-value'}, output.portfolioSummary?.totalStocks || 0),
+                          e('span', {className:'stat-label'}, 'Stocks')
+                        ),
+                        e('div', {className:'stat-item'},
+                          e('span', {className:'stat-value'}, output.portfolioSummary?.totalShares || 0),
+                          e('span', {className:'stat-label'}, 'Total Shares')
+                        ),
+                        e('div', {className:'stat-item'},
+                          e('span', {className:'stat-value'}, output.portfolioSummary?.fileName || 'N/A'),
+                          e('span', {className:'stat-label'}, 'Source')
+                        )
+                      ),
+                      e('div', {style:{fontSize:'13px', color:'#666', marginTop:'8px'}},
+                        output.portfolioSummary?.stocks || ''
+                      )
+                    ),
+                    e('div', {style:{marginTop:'20px'}},
+                      e('div', {className:'card-title'}, '💡 Investment Advice'),
+                      e('pre', null, output.summary || 'No advice available')
+                    )
+                  )
+            ) : e('div', {style:{textAlign:'center', padding:'40px', color:'#666'}}, 'No analysis yet')
+          ),
+
+          e('div', {className:'card'},
+            e('div', {className:'card-title'}, '💰 Billing Information'),
+            billing ? e('div', {className:'billing-info'}, 
+              e('div', {style:{fontSize:'18px', fontWeight:'600', marginBottom:'8px'}}, 
+                `$${billing.amount.toFixed(2)} ${billing.currency}`
+              ),
+              e('div', {style:{fontSize:'14px', color:'#2e7d32'}}, 
+                `Portfolio: $${billing.perPortfolio} | Per Stock: $${billing.perAdvice}`
+              )
+            ) : e('div', {style:{textAlign:'center', color:'#666'}}, 'Not available')
+          ),
+
+          e('div', {className:'card'},
+            e('div', {className:'card-title'}, '📊 Usage Summary'),
+            summary ? e('div', {className:'usage-summary'}, 
+              e('div', {style:{marginBottom:'12px'}}, 
+                e('strong', null, 'Last 24 Hours: '),
+                `${summary.last24Hours?.requests || 0} requests, $${summary.last24Hours?.cost || 0}`
+              ),
+              e('div', {style:{marginBottom:'12px'}}, 
+                e('strong', null, 'Total: '),
+                `${summary.totalRequests || 0} requests, $${summary.totalCost || 0}`
+              ),
+              e('div', {style:{fontSize:'13px', color:'#4a148c'}}, 
+                `Avg Portfolio Size: ${summary.averagePortfolioSize || 0} stocks`
+              )
+            ) : e('div', {style:{textAlign:'center', color:'#666'}}, 'Loading...')
+          )
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById('root')).render(e(App));
+    </script>
+  </body>
+</html>
