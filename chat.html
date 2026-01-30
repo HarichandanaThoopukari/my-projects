@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Chat Support - MindCare AI{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <h2 style="text-align: center; color: #4a90e2;">💬 Emotional Support Chat</h2>
+
+    <div class="psychologist-note" style="margin-bottom: 20px;">
+        <p><strong>Remember:</strong> If you're experiencing a mental health crisis or severe emotional distress, please seek immediate help from a qualified professional. This AI chat is for general emotional support only.</p>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+        <div class="message bot-message">Hello! I'm here to provide emotional support. How are you feeling today?</div>
+    </div>
+
+    <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Share how you're feeling..." required>
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+async function sendMessage() {
+    const input = document.getElementById('user-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    // Add user message
+    addMessage(message, 'user-message');
+    input.value = '';
+
+    // Get bot response
+    try {
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            addMessage(data.response, 'bot-message');
+        } else {
+            addMessage('Sorry, I encountered an error. Please try again.', 'bot-message');
+        }
+    } catch (error) {
+        addMessage('Sorry, I encountered an error. Please try again.', 'bot-message');
+    }
+}
+
+function addMessage(text, className) {
+    const messages = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${className}`;
+    messageDiv.textContent = text;
+    messages.appendChild(messageDiv);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+// Allow sending message with Enter key
+document.getElementById('user-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+</script>
+{% endblock %}
