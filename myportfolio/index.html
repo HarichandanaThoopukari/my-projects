@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harichandana Portfolio</title>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    /* ========== GLOBAL ========== */
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: #f9fbfc;
+      color: #222;
+      scroll-behavior: smooth;
+    }
+
+    h1,h2,h3 {
+      margin: 0;
+    }
+
+    section {
+      padding: 80px 8%;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 42px;
+      font-weight: 700;
+    }
+
+    .title span {
+      color: #1aa6a6;
+    }
+
+    /* ========== NAVBAR ========== */
+    header {
+      width: 100%;
+      padding: 18px 8%;
+      background: white;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav h2 {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    nav h2 span {
+      color: #1aa6a6;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      font-weight: 500;
+      color: #444;
+      transition: 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #1aa6a6;
+    }
+
+    /* ========== HERO SECTION ========== */
+    .hero {
+      padding-top: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, #f6fcfc, #eaf7f7);
+      min-height: 100vh;
+    }
+
+    .hero-text {
+      width: 55%;
+    }
+
+    .hero-text h4 {
+      font-size: 22px;
+      color: #1aa6a6;
+    }
+
+    .hero-text h1 {
+      font-size: 70px;
+      font-weight: 800;
+    }
+
+    .hero-text h1 span {
+      color: #1aa6a6;
+    }
+
+    .hero-text h3 {
+      margin: 15px 0;
+      font-size: 26px;
+      font-weight: 500;
+      color: #666;
+    }
+
+    .hero-text p {
+      width: 80%;
+      font-size: 17px;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    .hero-buttons {
+      margin-top: 30px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: #1aa6a6;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      border: 1px solid #ddd;
+      color: #222;
+    }
+
+    .socials {
+      margin-top: 30px;
+      display: flex;
+      gap: 15px;
+    }
+
+    .socials a {
+      width: 45px;
+      height: 45px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #222;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transition: 0.3s;
+    }
+
+    .socials a:hover {
+      color: white;
+      background: #1aa6a6;
+    }
+
+    .hero-img {
+      width: 40%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-img img {
+      width: 320px;
+      border-radius: 50%;
+      border: 8px solid #d8f1f1;
+    }
+
+    /* ========== ABOUT + EDUCATION ========== */
+    .about-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 50px;
+      margin-top: 60px;
+    }
+
+    .about-left {
+      width: 50%;
+    }
+
+    .about-left h3 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .about-left p {
+      line-height: 1.8;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    /* Timeline */
+    .timeline {
+      width: 50%;
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 0;
+      width: 3px;
+      height: 100%;
+      background: #1aa6a6;
+    }
+
+    .edu-card {
+      background: white;
+      padding: 18px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .edu-card::before {
+      content: "";
+      position: absolute;
+      left: -28px;
+      top: 25px;
+      width: 15px;
+      height: 15px;
+      background: white;
+      border: 4px solid #1aa6a6;
+      border-radius: 50%;
+    }
+
+    .edu-card h4 {
+      margin-bottom: 5px;
+      font-size: 18px;
+    }
+
+    .edu-card small {
+      color: #777;
+    }
+
+    /* ========== SKILLS ========== */
+    .skills-grid {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 25px;
+    }
+
+    .skill-card {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+      transition: 0.3s;
+    }
+
+    .skill-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .skill-card i {
+      font-size: 26px;
+      color: #1aa6a6;
+      margin-bottom: 12px;
+    }
+
+    /* ========== SERVICES ========== */
+    .services-grid {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+    }
+
+    .service-box {
+      background: white;
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    }
+
+    .service-box i {
+      font-size: 30px;
+      color: #1aa6a6;
+    }
+
+    .tags {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: #eaf7f7;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      color: #1aa6a6;
+    }
+
+    /* ========== PROJECTS ========== */
+    .projects-grid {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+    }
+
+    .project-card {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    }
+
+    .project-card a {
+      display: inline-block;
+      margin-top: 15px;
+      color: #1aa6a6;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* ========== CONTACT ========== */
+    .contact-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .contact-left {
+      width: 45%;
+    }
+
+    .contact-box {
+      background: white;
+      padding: 18px;
+      border-radius: 15px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .contact-box i {
+      font-size: 22px;
+      color: #1aa6a6;
+    }
+
+    form {
+      width: 50%;
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    }
+
+    form input, form textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+    }
+
+    form button {
+      width: 100%;
+      padding: 14px;
+      background: #1aa6a6;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: white;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <nav>
+    <h2>Hari<span>chandana</span></h2>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>de
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-text">
+    <h4>Hello, I'm</h4>
+    <h1>Harichandana <span>Thoopukari</span></h1>
+    <h3>Aspiring Software Engineer</h3>
+    <p>
+      Passionate about AI & Web Development. A Computer Science student focused
+      on building efficient, user-focused applications and exploring emerging technologies.
+    </p>
+
+    <div class="hero-buttons">
+      <a href="#projects" class="btn btn-primary">View My Work</a>
+      <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+    </div>
+
+    <div class="socials">
+      <a href="https://github.com/HarichandanaThoopukari" target="_blank"><i class="fa-brands fa-github"></i></a>
+      <a href="https://linkedin.com/in/harichandana-thoopukari" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+      <a href="mailto:thoopukariharichandana@gmail.com"><i class="fa-solid fa-envelope"></i></a>
+    </div>
+  </div>
+
+  <div class="hero-img">
+    <img src="portfolioimage.jpeg" alt="Profile">
+  </div>
+</section>
+
+<!-- ABOUT + EDUCATION -->
+<section id="about">
+  <h2 class="title">About <span>Me</span></h2>
+
+  <div class="about-container">
+    <div class="about-left">
+      <h3>Passionate about Technology & Innovation</h3>
+      <p>
+        I am a passionate Computer Science Engineering student with a strong interest in software development,
+         problem-solving, and emerging technologies. I enjoy building efficient, user-focused applications and exploring areas like web 
+         development, data structures, algorithms, and AI.
+      </p>
+      <p>
+        With a mindset for continuous learning, I aim to contribute to innovative projects that make a 
+        real-world impact. Currently in my second year, I'm focused on backend development, software engineering principles, and applying classroom 
+        learning to real-world problem-solving through academic and hackathon projects
+      </p>
+    </div>
+
+    <div class="timeline">
+      <h3>Education Journey</h3>
+
+      <div class="edu-card">
+        <h4>SR University</h4>
+        <small>B.Tech CSE • 2024–2028 (Currently Pursuing)</small>
+      </div>
+
+      <div class="edu-card">
+        <h4>Sree Chaitanya Junior College</h4>
+        <small>Intermediate • 2021–2024</small>
+      </div>
+
+      <div class="edu-card">
+        <h4>TS Model School</h4>
+        <small>Secondary • 2017–2021</small>
+      </div>
+
+      <div class="edu-card">
+        <h4>Kerala English Medium High School</h4>
+        <small>Primary • 2013–2017</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <h2 class="title">Technical <span>Skills</span></h2>
+
+  <div class="skills-grid">
+    <div class="skill-card"><i class="fa-solid fa-c"></i><h3>C</h3></div>
+    <div class="skill-card"><i class="fa-brands fa-python"></i><h3>Python</h3></div>
+    <div class="skill-card"><i class="fa-brands fa-html5"></i><h3>HTML/CSS</h3></div>
+    <div class="skill-card"><i class="fa-brands fa-js"></i><h3>JavaScript</h3></div>
+    <div class="skill-card"><i class="fa-solid fa-database"></i><h3>SQL</h3></div>
+    <div class="skill-card"><i class="fa-solid fa-desktop"></i><h3>Operating Systems</h3></div>
+    <div class="skill-card"><i class="fa-solid fa-cloud"></i><h3>Cloud & AI</h3></div>
+    <div class="skill-card"><i class="fa-solid fa-brain"></i><h3>Prompt Engineering</h3></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <h2 class="title">My <span>Services</span></h2>
+
+  <div class="services-grid">
+
+    <div class="service-box">
+      <i class="fa-solid fa-palette"></i>
+      <h3>Web Designing</h3>
+      <p>Crafting user-centered responsive web interfaces with modern UI/UX.</p>
+      <div class="tags">
+        <span class="tag">Responsive Design</span>
+        <span class="tag">UI/UX Focused</span>
+        <span class="tag">Modern Aesthetics</span>
+      </div>
+    </div>
+
+    <div class="service-box">
+      <i class="fa-solid fa-server"></i>
+      <h3>Backend Development</h3>
+      <p>Building scalable server-side solutions with secure APIs and databases.</p>
+      <div class="tags">
+        <span class="tag">API Development</span>
+        <span class="tag">Database Design</span>
+        <span class="tag">Security First</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <h2 class="title">Hackathon <span>Projects</span></h2>
+
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <h3>Participated in College Level SMART INDIA HACKTHON (2025-26)</h3>
+       <h3> Healthbot-AI </h3>
+      <p>Multilingual AI chatbot for preventive healthcare awareness.</p>
+      <a href="https://github.com/HarichandanaThoopukari/Healthbot-AI" target="_blank">
+        View Code →
+      </a>
+    </div>
+
+    <div class="project-card">
+      <h3>Stock Market Analysis Platform</h3>
+          <h3>Participated DENOVATE HACK WITH HYDERBAD online Hackthon (2025-26)</h3>
+      <p>Real-time stock insights with Pathway + Flexprice billing automation.</p>
+      <a href="https://github.com/HarichandanaThoopukari/Stock-Market-Analysis" target="_blank">
+        View Code →
+      </a>
+    </div>
+
+    <div class="project-card">
+      <h3>MINDCAREAI</h3>
+      <h3>Mentis Hackathon 2025-26</h3>
+      <p> Participated in  24 hours national level MENTIS Hackthon held at Vaagdevi college of Engeneering.</p>
+      <a href="https://github.com/HarichandanaThoopukari" target="_blank">
+        View Code →
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <h2 class="title">Let's <span>Connect</span></h2>
+
+  <div class="contact-container">
+
+    <div class="contact-left">
+      <p>I’m always open to discussing projects, creative ideas, or opportunities.</p>
+
+      <div class="contact-box">
+        <i class="fa-solid fa-envelope"></i>
+        <p>thoopukariharichandana@gmail.com</p>
+      </div>
+
+      <div class="contact-box">
+        <i class="fa-brands fa-linkedin"></i>
+        <p>harichandana-thoopukari</p>
+      </div>
+
+      <div class="contact-box">
+        <i class="fa-brands fa-github"></i>
+        <p>HarichandanaThoopukari</p>
+      </div>
+    </div>
+
+    <form>
+      <input type="text" placeholder="Your Name">
+      <input type="email" placeholder="Email Address">
+      <textarea rows="6" placeholder="Tell me about your project..."></textarea>
+      <button>Send Message ✈️</button>
+    </form>
+
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Harichandana Thoopukari </p>
+</footer>
+
+</body>
+</html>
